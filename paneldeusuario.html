@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Administra tu cuenta de FindPets.">
+
+    <title>Mi cuenta | FindPets</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Rounded">
+
+</head>
+
+<body>
+
+
+    <!-- ENCABEZADO -->
+
+    <header class="encabezado-principal">
+
+        <div class="contenedor barra-navegacion">
+
+            <a href="{{ url_for('inicio') }}" class="marca-findpets">
+
+                <img src="{{ url_for('static', filename='imgs/logo.png') }}" alt="Logo FindPets" class="logo-findpets">
+
+                <span>
+                    FindPets
+                </span>
+
+            </a>
+
+
+            <button type="button" class="boton-menu-movil" id="botonMenu" aria-label="Abrir menú">
+
+                <span class="material-icons-rounded">
+                    menu
+                </span>
+
+            </button>
+
+
+            <nav class="menu-principal" id="menuPrincipal">
+
+                <a href="{{ url_for('inicio') }}" class="enlace-menu">
+                    Inicio
+                </a>
+
+                <a href="{{ url_for('buscar_mascota') }}" class="enlace-menu">
+                    Buscar mascota
+                </a>
+
+                <a href="{{ url_for('buscarporcodigo') }}" class="enlace-menu">
+                    Buscar por código
+                </a>
+
+                <a href="{{ url_for('murocomunitario') }}" class="enlace-menu">
+                    Muro comunitario
+                </a>
+
+                <a href="{{ url_for('formulariomascota') }}" class="enlace-menu">
+                    Reportar mascota
+                </a>
+
+                <a href="{{ url_for('mis_mascotas') }}" class="enlace-menu">
+                    Mis mascotas
+                </a>
+
+            </nav>
+
+
+            <div class="acciones-usuario">
+
+                <a href="{{ url_for('paneldelusuario') }}" class="acceso-cuenta activo">
+
+                    {% if usuario.foto_perfil %}
+
+                    <img src="{{ url_for('static', filename='uploads/' + usuario.foto_perfil) }}" alt="Foto de perfil"
+                        class="foto-usuario-menu">
+
+                    {% else %}
+
+                    <span class="material-icons-rounded">
+                        account_circle
+                    </span>
+
+                    {% endif %}
+
+                    <span>
+                        Mi cuenta
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- CONTENIDO -->
+
+    <main class="pagina-cuenta">
+
+        <section class="contenedor">
+
+            <!-- ENCABEZADO -->
+
+            <div class="encabezado-pagina">
+
+                <span class="etiqueta-superior">
+
+                    <span class="material-icons-rounded">
+                        person
+                    </span>
+
+                    Mi cuenta
+
+                </span>
+
+                <h1>
+                    Administra tu cuenta
+                </h1>
+
+                <p>
+                    Actualiza tu información personal, administra tus mascotas
+                    y revisa la actividad de tu cuenta.
+                </p>
+
+            </div>
+
+
+            <!-- MENSAJES DE FLASK -->
+
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+
+            {% if mensajes %}
+
+            <div class="contenedor-alertas">
+
+                {% for categoria, mensaje in mensajes %}
+
+                <div class="alerta alerta-{{ categoria }}">
+
+                    <span class="material-icons-rounded">
+
+                        {% if categoria == 'exito' %}
+
+                        check_circle
+
+                        {% elif categoria == 'error' %}
+
+                        error
+
+                        {% else %}
+
+                        info
+
+                        {% endif %}
+
+                    </span>
+
+                    <p>
+                        {{ mensaje }}
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+            {% endwith %}
+
+
+            <!-- PANEL -->
+
+            <div class="panel-cuenta">
+
+
+                <!-- MENÚ IZQUIERDO -->
+
+                <aside class="menu-lateral-cuenta">
+
+
+                    <!-- PERFIL -->
+
+                    <div class="perfil-resumen">
+
+                        <div class="contenedor-foto-perfil">
+
+                            {% if usuario.foto_perfil %}
+
+                            <img src="{{ url_for('static', filename='uploads/' + usuario.foto_perfil) }}"
+                                alt="Foto de perfil" class="foto-perfil">
+
+                            {% else %}
+
+                            <span class="material-icons-rounded avatar-grande">
+                                account_circle
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <h2>
+                            {{ usuario.nombre }} {{ usuario.apellido }}
+                        </h2>
+
+                        <p>
+                            {{ usuario.correo }}
+                        </p>
+
+
+                        {% if usuario.rol %}
+
+                        <span class="etiqueta-rol">
+
+                            <span class="material-icons-rounded">
+                                verified
+                            </span>
+
+                            {{ usuario.rol }}
+
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- NAVEGACIÓN DE CUENTA -->
+
+                    <nav class="navegacion-cuenta">
+
+                        <a href="#perfil" class="activo">
+
+                            <span class="material-icons-rounded">
+                                person
+                            </span>
+
+                            Mi perfil
+
+                        </a>
+
+
+                        <a href="{{ url_for('mis_mascotas') }}">
+
+                            <span class="material-icons-rounded">
+                                pets
+                            </span>
+
+                            Mis mascotas
+
+                        </a>
+
+
+                        <a href="#mis-reportes">
+
+                            <span class="material-icons-rounded">
+                                campaign
+                            </span>
+
+                            Mis reportes
+
+                        </a>
+
+
+                        <a href="{{ url_for('chat') }}">
+
+                            <span class="material-icons-rounded">
+                                chat
+                            </span>
+
+                            Conversaciones
+
+                        </a>
+
+
+                        <a href="#seguridad">
+
+                            <span class="material-icons-rounded">
+                                lock
+                            </span>
+
+                            Seguridad
+
+                        </a>
+
+
+                        {% if usuario.rol == 'Administrador' %}
+
+                        <a href="{{ url_for('paneladministrador') }}">
+
+                            <span class="material-icons-rounded">
+                                admin_panel_settings
+                            </span>
+
+                            Administración
+
+                        </a>
+
+                        {% endif %}
+
+
+                        <a href="{{ url_for('cerrar_sesion') }}" class="cerrar-sesion">
+
+                            <span class="material-icons-rounded">
+                                logout
+                            </span>
+
+                            Cerrar sesión
+
+                        </a>
+
+                    </nav>
+
+                </aside>
+
+
+                <!-- CONTENIDO DERECHO -->
+
+                <div class="contenido-cuenta">
+
+
+                    <!-- DATOS PERSONALES -->
+
+                    <section class="tarjeta-cuenta" id="perfil">
+
+                        <div class="encabezado-tarjeta-cuenta">
+
+                            <div>
+
+                                <span class="subtitulo-seccion">
+                                    Información personal
+                                </span>
+
+                                <h2>
+                                    Mi perfil
+                                </h2>
+
+                                <p>
+                                    Modifica los datos asociados a tu cuenta.
+                                </p>
+
+                            </div>
+
+                            <span class="icono-seccion-cuenta">
+
+                                <span class="material-icons-rounded">
+                                    manage_accounts
+                                </span>
+
+                            </span>
+
+                        </div>
+
+
+                        <form action="{{ url_for('actualizar_perfil') }}" method="POST" enctype="multipart/form-data"
+                            class="formulario-cuenta">
+
+
+                            <!-- FOTO -->
+
+                            <div class="editar-foto-perfil">
+
+                                <div class="foto-perfil-edicion">
+
+                                    {% if usuario.foto_perfil %}
+
+                                    <img src="{{ url_for('static', filename='uploads/' + usuario.foto_perfil) }}"
+                                        alt="Foto de perfil">
+
+                                    {% else %}
+
+                                    <span class="material-icons-rounded">
+                                        account_circle
+                                    </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div>
+
+                                    <h3>
+                                        Foto de perfil
+                                    </h3>
+
+                                    <p>
+                                        Puedes subir una fotografía JPG, PNG
+                                        o WEBP.
+                                    </p>
+
+                                    <label for="foto_perfil" class="boton-secundario">
+
+                                        <span class="material-icons-rounded">
+                                            photo_camera
+                                        </span>
+
+                                        Cambiar foto
+
+                                    </label>
+
+                                    <input type="file" id="foto_perfil" name="foto_perfil" accept="image/*" hidden>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- NOMBRE -->
+
+                            <div class="fila-campos">
+
+                                <div class="grupo-campo">
+
+                                    <label for="nombre">
+                                        Nombre
+                                    </label>
+
+                                    <div class="campo-con-icono">
+
+                                        <span class="material-icons-rounded">
+                                            person
+                                        </span>
+
+                                        <input type="text" id="nombre" name="nombre" value="{{ usuario.nombre }}"
+                                            required>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="grupo-campo">
+
+                                    <label for="apellido">
+                                        Apellido
+                                    </label>
+
+                                    <div class="campo-con-icono">
+
+                                        <span class="material-icons-rounded">
+                                            badge
+                                        </span>
+
+                                        <input type="text" id="apellido" name="apellido" value="{{ usuario.apellido }}"
+                                            required>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- CORREO -->
+
+                            <div class="grupo-campo">
+
+                                <label for="correo">
+                                    Correo electrónico
+                                </label>
+
+                                <div class="campo-con-icono">
+
+                                    <span class="material-icons-rounded">
+                                        mail
+                                    </span>
+
+                                    <input type="email" id="correo" name="correo" value="{{ usuario.correo }}" required>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- TELÉFONO -->
+
+                            <div class="grupo-campo">
+
+                                <label for="telefono">
+                                    Teléfono
+                                </label>
+
+                                <div class="campo-con-icono">
+
+                                    <span class="material-icons-rounded">
+                                        phone
+                                    </span>
+
+                                    <input type="tel" id="telefono" name="telefono" value="{{ usuario.telefono or '' }}"
+                                        placeholder="+56 9 1234 5678">
+
+                                </div>
+
+                                <small class="ayuda-campo">
+                                    Tu número no será mostrado públicamente.
+                                </small>
+
+                            </div>
+
+
+                            <!-- COMUNA -->
+
+                            <div class="grupo-campo">
+
+                                <label for="comuna">
+                                    Comuna
+                                </label>
+
+                                <div class="campo-con-icono">
+
+                                    <span class="material-icons-rounded">
+                                        location_on
+                                    </span>
+
+                                    <input type="text" id="comuna" name="comuna" value="{{ usuario.comuna or '' }}"
+                                        placeholder="Ejemplo: La Florida">
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="acciones-formulario">
+
+                                <button type="submit" class="boton-principal">
+
+                                    <span class="material-icons-rounded">
+                                        save
+                                    </span>
+
+                                    Guardar cambios
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </section>
+
+
+                    <!-- MIS REPORTES -->
+
+                    <section class="tarjeta-cuenta" id="mis-reportes">
+
+                        <div class="encabezado-tarjeta-cuenta">
+
+                            <div>
+
+                                <span class="subtitulo-seccion">
+                                    Actividad
+                                </span>
+
+                                <h2>
+                                    Mis reportes
+                                </h2>
+
+                                <p>
+                                    Revisa los reportes que has publicado.
+                                </p>
+
+                            </div>
+
+                            <span class="icono-seccion-cuenta">
+
+                                <span class="material-icons-rounded">
+                                    campaign
+                                </span>
+
+                            </span>
+
+                        </div>
+
+
+                        {% if reportes %}
+
+                        <div class="lista-reportes-cuenta">
+
+                            {% for reporte in reportes %}
+
+                            <article class="reporte-cuenta">
+
+                                {% if reporte.foto %}
+
+                                <img src="{{ url_for('static', filename='uploads/' + reporte.foto) }}"
+                                    alt="{{ reporte.nombre }}">
+
+                                {% else %}
+
+                                <div class="reporte-sin-foto">
+
+                                    <span class="material-icons-rounded">
+                                        pets
+                                    </span>
+
+                                </div>
+
+                                {% endif %}
+
+
+                                <div class="informacion-reporte-cuenta">
+
+                                    <div class="titulo-reporte-cuenta">
+
+                                        <h3>
+                                            {{ reporte.nombre }}
+                                        </h3>
+
+                                        <span
+                                            class="estado-reporte estado-{{ reporte.estado|lower|replace(' ', '-') }}">
+                                            {{ reporte.estado }}
+                                        </span>
+
+                                    </div>
+
+
+                                    <p>
+
+                                        <span class="material-icons-rounded">
+                                            location_on
+                                        </span>
+
+                                        {{ reporte.ubicacion }}
+
+                                    </p>
+
+
+                                    <small>
+                                        {{ reporte.fecha }}
+                                    </small>
+
+                                </div>
+
+                            </article>
+
+                            {% endfor %}
+
+                        </div>
+
+                        {% else %}
+
+                        <div class="estado-vacio-cuenta">
+
+                            <span class="material-icons-rounded">
+                                campaign
+                            </span>
+
+                            <h3>
+                                No tienes reportes publicados
+                            </h3>
+
+                            <p>
+                                Cuando publiques una mascota perdida,
+                                encontrada o un avistamiento aparecerá aquí.
+                            </p>
+
+                            <a href="{{ url_for('formulariomascota') }}" class="boton-secundario">
+                                Crear reporte
+                            </a>
+
+                        </div>
+
+                        {% endif %}
+
+                    </section>
+                                    <!-- SEGURIDAD -->
+
+                <section
+                    class="tarjeta-cuenta"
+                    id="seguridad"
+                >
+
+                    <div class="encabezado-tarjeta-cuenta">
+
+                        <div>
+
+                            <span class="subtitulo-seccion">
+                                Seguridad
+                            </span>
+
+                            <h2>
+                                Cambiar contraseña
+                            </h2>
+
+                            <p>
+                                Actualiza tu contraseña para mantener
+                                protegida tu cuenta.
+                            </p>
+
+                        </div>
+
+                        <span class="icono-seccion-cuenta">
+
+                            <span class="material-icons-rounded">
+                                lock
+                            </span>
+
+                        </span>
+
+                    </div>
+
+
+                    <form
+                        action="{{ url_for('cambiar_contrasena') }}"
+                        method="POST"
+                        class="formulario-cuenta"
+                    >
+
+                        <!-- CONTRASEÑA ACTUAL -->
+
+                        <div class="grupo-campo">
+
+                            <label for="contrasena_actual">
+                                Contraseña actual
+                            </label>
+
+                            <div class="campo-con-icono campo-con-boton">
+
+                                <span class="material-icons-rounded">
+                                    lock
+                                </span>
+
+                                <input
+                                    type="password"
+                                    id="contrasena_actual"
+                                    name="contrasena_actual"
+                                    placeholder="Ingresa tu contraseña actual"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="boton-ver-contrasena"
+                                    data-input="contrasena_actual"
+                                    aria-label="Mostrar contraseña"
+                                >
+
+                                    <span class="material-icons-rounded">
+                                        visibility
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- NUEVA CONTRASEÑA -->
+
+                        <div class="fila-campos">
+
+                            <div class="grupo-campo">
+
+                                <label for="nueva_contrasena">
+                                    Nueva contraseña
+                                </label>
+
+                                <div class="campo-con-icono campo-con-boton">
+
+                                    <span class="material-icons-rounded">
+                                        password
+                                    </span>
+
+                                    <input
+                                        type="password"
+                                        id="nueva_contrasena"
+                                        name="nueva_contrasena"
+                                        placeholder="Mínimo 6 caracteres"
+                                        minlength="6"
+                                        autocomplete="new-password"
+                                        required
+                                    >
+
+                                    <button
+                                        type="button"
+                                        class="boton-ver-contrasena"
+                                        data-input="nueva_contrasena"
+                                        aria-label="Mostrar contraseña"
+                                    >
+
+                                        <span class="material-icons-rounded">
+                                            visibility
+                                        </span>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- CONFIRMAR -->
+
+                            <div class="grupo-campo">
+
+                                <label for="confirmar_contrasena">
+                                    Confirmar contraseña
+                                </label>
+
+                                <div class="campo-con-icono campo-con-boton">
+
+                                    <span class="material-icons-rounded">
+                                        lock_reset
+                                    </span>
+
+                                    <input
+                                        type="password"
+                                        id="confirmar_contrasena"
+                                        name="confirmar_contrasena"
+                                        placeholder="Repite la contraseña"
+                                        minlength="6"
+                                        autocomplete="new-password"
+                                        required
+                                    >
+
+                                    <button
+                                        type="button"
+                                        class="boton-ver-contrasena"
+                                        data-input="confirmar_contrasena"
+                                        aria-label="Mostrar contraseña"
+                                    >
+
+                                        <span class="material-icons-rounded">
+                                            visibility
+                                        </span>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- AVISO -->
+
+                        <div class="aviso-seguridad-cuenta">
+
+                            <span class="material-icons-rounded">
+                                security
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Protege tu cuenta
+                                </strong>
+
+                                <p>
+                                    Utiliza una contraseña que no uses
+                                    en otras plataformas.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="acciones-formulario">
+
+                            <button
+                                type="submit"
+                                class="boton-principal"
+                            >
+
+                                <span class="material-icons-rounded">
+                                    lock_reset
+                                </span>
+
+                                Cambiar contraseña
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+
+                <!-- PRIVACIDAD -->
+
+                <section class="tarjeta-cuenta">
+
+                    <div class="encabezado-tarjeta-cuenta">
+
+                        <div>
+
+                            <span class="subtitulo-seccion">
+                                Privacidad
+                            </span>
+
+                            <h2>
+                                Protección de tus datos
+                            </h2>
+
+                            <p>
+                                FindPets protege tu información personal
+                                durante las búsquedas y conversaciones.
+                            </p>
+
+                        </div>
+
+                        <span class="icono-seccion-cuenta">
+
+                            <span class="material-icons-rounded">
+                                shield
+                            </span>
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="lista-privacidad">
+
+                        <article class="item-privacidad">
+
+                            <span class="material-icons-rounded">
+                                phone_locked
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Teléfono protegido
+                                </h3>
+
+                                <p>
+                                    Tu número de teléfono no se muestra
+                                    públicamente en los reportes.
+                                </p>
+
+                            </div>
+
+                        </article>
+
+
+                        <article class="item-privacidad">
+
+                            <span class="material-icons-rounded">
+                                alternate_email
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Correo privado
+                                </h3>
+
+                                <p>
+                                    Tu correo electrónico tampoco se
+                                    mostrará a otros usuarios.
+                                </p>
+
+                            </div>
+
+                        </article>
+
+
+                        <article class="item-privacidad">
+
+                            <span class="material-icons-rounded">
+                                forum
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Chat anónimo
+                                </h3>
+
+                                <p>
+                                    Las personas pueden comunicarse
+                                    utilizando el chat interno de FindPets
+                                    sin intercambiar datos personales.
+                                </p>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ACCESOS RÁPIDOS -->
+
+                <section class="tarjeta-cuenta">
+
+                    <div class="encabezado-tarjeta-cuenta">
+
+                        <div>
+
+                            <span class="subtitulo-seccion">
+                                Accesos rápidos
+                            </span>
+
+                            <h2>
+                                Administrar FindPets
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="cuadricula-accesos-cuenta">
+
+                        <a
+                            href="{{ url_for('mis_mascotas') }}"
+                            class="tarjeta-acceso-cuenta"
+                        >
+
+                            <span class="material-icons-rounded">
+                                pets
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Mis mascotas
+                                </h3>
+
+                                <p>
+                                    Administra las mascotas asociadas
+                                    a tu cuenta.
+                                </p>
+
+                            </div>
+
+                            <span class="material-icons-rounded">
+                                arrow_forward
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('formulariomascota') }}"
+                            class="tarjeta-acceso-cuenta"
+                        >
+
+                            <span class="material-icons-rounded">
+                                add_circle
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Reportar mascota
+                                </h3>
+
+                                <p>
+                                    Publica una mascota perdida,
+                                    encontrada o avistada.
+                                </p>
+
+                            </div>
+
+                            <span class="material-icons-rounded">
+                                arrow_forward
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('chat') }}"
+                            class="tarjeta-acceso-cuenta"
+                        >
+
+                            <span class="material-icons-rounded">
+                                chat
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Conversaciones
+                                </h3>
+
+                                <p>
+                                    Revisa tus conversaciones
+                                    privadas.
+                                </p>
+
+                            </div>
+
+                            <span class="material-icons-rounded">
+                                arrow_forward
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('murocomunitario') }}"
+                            class="tarjeta-acceso-cuenta"
+                        >
+
+                            <span class="material-icons-rounded">
+                                groups
+                            </span>
+
+                            <div>
+
+                                <h3>
+                                    Comunidad
+                                </h3>
+
+                                <p>
+                                    Revisa los reportes publicados
+                                    por otros usuarios.
+                                </p>
+
+                            </div>
+
+                            <span class="material-icons-rounded">
+                                arrow_forward
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ZONA DE PELIGRO -->
+
+                <section class="tarjeta-cuenta zona-peligro">
+
+                    <div class="encabezado-zona-peligro">
+
+                        <span class="icono-peligro">
+
+                            <span class="material-icons-rounded">
+                                warning
+                            </span>
+
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Eliminar cuenta
+                            </h2>
+
+                            <p>
+                                Esta acción eliminará permanentemente
+                                tu cuenta de FindPets.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="contenido-zona-peligro">
+
+                        <p>
+                            Al eliminar tu cuenta perderás el acceso a tus
+                            mascotas registradas, reportes, conversaciones
+                            y demás información asociada.
+                        </p>
+
+
+                        <form
+                            action="{{ url_for('eliminar_cuenta') }}"
+                            method="POST"
+                            onsubmit="return confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.')"
+                        >
+
+                            <button
+                                type="submit"
+                                class="boton-eliminar"
+                            >
+
+                                <span class="material-icons-rounded">
+                                    delete_forever
+                                </span>
+
+                                Eliminar mi cuenta
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer class="pie-pagina-principal">
+
+    <div class="contenedor contenido-pie-pagina">
+
+        <div class="informacion-pie">
+
+            <a
+                href="{{ url_for('inicio') }}"
+                class="marca-findpets marca-pie"
+            >
+
+                <img
+                    src="{{ url_for('static', filename='imgs/logo.png') }}"
+                    alt="Logo FindPets"
+                    class="logo-findpets"
+                >
+
+                <span>
+                    FindPets
+                </span>
+
+            </a>
+
+            <p>
+                Reconectando familias con sus mascotas de manera
+                segura y compasiva.
+            </p>
+
+        </div>
+
+
+        <div class="columna-pie">
+
+            <h3>
+                Empresa
+            </h3>
+
+            <a href="#">
+                Sobre nosotros
+            </a>
+
+            <a href="#">
+                Impacto social
+            </a>
+
+            <a href="#">
+                Contacto
+            </a>
+
+        </div>
+
+
+        <div class="columna-pie">
+
+            <h3>
+                Ayuda
+            </h3>
+
+            <a href="#">
+                Centro de ayuda
+            </a>
+
+            <a href="#">
+                Cómo funciona
+            </a>
+
+            <a href="#">
+                Preguntas frecuentes
+            </a>
+
+        </div>
+
+
+        <div class="columna-pie">
+
+            <h3>
+                Legal
+            </h3>
+
+            <a href="#">
+                Privacidad
+            </a>
+
+            <a href="#">
+                Términos de servicio
+            </a>
+
+            <a href="#">
+                Cookies
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="contenedor pie-pagina-inferior">
+
+        <p>
+            © 2026 FindPets. Todos los derechos reservados.
+        </p>
+
+    </div>
+
+</footer>
+
+
+<script
+    src="{{ url_for('static', filename='js/java.js') }}"
+    defer
+></script>
+
+</body>
+
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Chat seguro | FindPets</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Rounded">
+
+</head>
+
+<body>
+
+    <header class="encabezado-principal">
+
+        <div class="contenedor barra-navegacion">
+
+            <a href="{{ url_for('inicio') }}" class="marca-findpets">
+
+                <img src="{{ url_for('static', filename='imgs/logo.png') }}" class="logo-findpets" alt="FindPets">
+
+                <span>FindPets</span>
+
+            </a>
+
+            <nav class="menu-principal">
+
+                <a href="{{ url_for('inicio') }}">
+                    Inicio
+                </a>
+
+                <a href="{{ url_for('buscar_mascota') }}">
+                    Buscar mascota
+                </a>
+
+                <a href="{{ url_for('murocomunitario') }}">
+                    Muro comunitario
+                </a>
+
+                <a href="{{ url_for('mis_mascotas') }}">
+                    Mis mascotas
+                </a>
+
+            </nav>
+
+            <a href="{{ url_for('paneldelusuario') }}" class="acceso-cuenta">
+
+                <span class="material-icons-rounded">
+                    account_circle
+                </span>
+
+                Mi cuenta
+
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main class="pagina-chat">
+
+        <div class="contenedor-chat">
+
+            <!-- LISTA DE CONVERSACIONES -->
+
+            <aside class="sidebar-chat">
+
+                <h2>
+
+                    Conversaciones
+
+                </h2>
+
+                <div class="buscador-chat">
+
+                    <span class="material-icons-rounded">
+
+                        search
+
+                    </span>
+
+                    <input type="search" placeholder="Buscar conversación...">
+
+                </div>
+
+                {% for conversacion in conversaciones %}
+
+                <a href="{{ url_for('chat', id_chat=conversacion.id_chat) }}"
+                    class="item-chat {% if conversacion.id_chat == chat_actual.id_chat %}activo{% endif %}">
+
+                    {% if conversacion.foto %}
+
+                    <img src="{{ url_for('static', filename='uploads/' + conversacion.foto) }}" class="foto-chat"
+                        alt="">
+
+                    {% else %}
+
+                    <span class="material-icons-rounded foto-chat-vacia">
+
+                        pets
+
+                    </span>
+
+                    {% endif %}
+
+                    <div class="info-chat">
+
+                        <strong>
+
+                            {{ conversacion.nombre }}
+
+                        </strong>
+
+                        <p>
+
+                            {{ conversacion.ultimo_mensaje }}
+
+                        </p>
+
+                    </div>
+
+                    <small>
+
+                        {{ conversacion.hora }}
+
+                    </small>
+
+                </a>
+
+                {% endfor %}
+
+            </aside>
+
+
+            <!-- CONVERSACIÓN -->
+
+            <section class="ventana-chat">
+
+                <header class="cabecera-chat">
+
+                    <div class="usuario-chat">
+
+                        {% if chat_actual.foto %}
+
+                        <img src="{{ url_for('static', filename='uploads/' + chat_actual.foto) }}" class="foto-chat"
+                            alt="">
+
+                        {% else %}
+
+                        <span class="material-icons-rounded foto-chat-vacia">
+
+                            pets
+
+                        </span>
+
+                        {% endif %}
+
+                        <div>
+
+                            <h2>
+
+                                {{ chat_actual.nombre }}
+
+                            </h2>
+
+                            <small>
+
+                                Chat seguro de FindPets
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </header>
+
+
+                <div class="mensajes-chat">
+
+                    {% for mensaje in mensajes %}
+
+                    <div
+                        class="mensaje {% if mensaje.usuario_id == session.get('usuario_id') %}propio{% else %}otro{% endif %}">
+
+                        <p>
+
+                            {{ mensaje.mensaje }}
+
+                        </p>
+
+                        <small>
+
+                            {{ mensaje.hora }}
+
+                        </small>
+
+                    </div>
+
+                    {% endfor %}
+                </div>
+
+                <!-- FORMULARIO -->
+
+                <form action="{{ url_for('enviar_mensaje', id_chat=chat_actual.id_chat) }}" method="POST"
+                    enctype="multipart/form-data" class="formulario-chat">
+
+                    <label for="imagen" class="boton-adjunto" title="Enviar imagen">
+
+                        <span class="material-icons-rounded">
+                            image
+                        </span>
+
+                    </label>
+
+                    <input type="file" id="imagen" name="imagen" accept="image/*" hidden>
+
+                    <label for="ubicacion" class="boton-adjunto" title="Compartir ubicación">
+
+                        <span class="material-icons-rounded">
+                            location_on
+                        </span>
+
+                    </label>
+
+                    <input type="hidden" id="ubicacion" name="ubicacion">
+
+                    <input type="text" name="mensaje" placeholder="Escribe un mensaje..." autocomplete="off" required>
+
+                    <button type="submit" class="boton-enviar">
+
+                        <span class="material-icons-rounded">
+                            send
+                        </span>
+
+                    </button>
+
+                </form>
+
+
+                <div class="informacion-chat">
+
+                    <span class="material-icons-rounded">
+                        shield
+                    </span>
+
+                    <p>
+
+                        Este chat es privado y seguro. Tus datos personales no serán
+                        visibles para la otra persona. Una vez que la mascota sea marcada
+                        como encontrada, la conversación se cerrará automáticamente.
+
+                    </p>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <footer class="pie-pagina-principal">
+
+        <div class="contenedor contenido-pie-pagina">
+
+            <div class="informacion-pie">
+
+                <img src="{{ url_for('static', filename='imgs/logo.png') }}" class="logo-findpets" alt="FindPets">
+
+                <p>
+
+                    FindPets protege la privacidad de todos los usuarios
+                    mediante conversaciones seguras.
+
+                </p>
+
+            </div>
+
+            <div class="columna-pie">
+
+                <h3>
+                    Empresa
+                </h3>
+
+                <a href="#">
+                    Sobre nosotros
+                </a>
+
+                <a href="#">
+                    Contacto
+                </a>
+
+                <a href="#">
+                    Blog
+                </a>
+
+            </div>
+
+            <div class="columna-pie">
+
+                <h3>
+                    Ayuda
+                </h3>
+
+                <a href="#">
+                    Centro de ayuda
+                </a>
+
+                <a href="#">
+                    Soporte
+                </a>
+
+                <a href="#">
+                    Privacidad
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="pie-pagina-inferior">
+
+            © 2026 FindPets. Todos los derechos reservados.
+
+        </div>
+
+    </footer>
+
+
+    <script src="{{ url_for('static', filename='js/java.js') }}"></script>
+
+</body>
+
+</html>
