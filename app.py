@@ -29,7 +29,7 @@ EXTENSIONES_PERMITIDAS = {"png", "jpg", "jpeg", "gif", "webp"}
 
 # =========================================================
 # FUNCIONES DE APOYO
-# =========================================================
+# =========================================================kjsdhbikjsbda
 
 def conectar_bd():
     return connectToMySQL("findpets")
