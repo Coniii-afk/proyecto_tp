@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Mis mascotas | FindPets</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/styles.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/icon?family=Material+Icons+Rounded"
+    >
+
+</head>
+
+<body>
+
+<header class="encabezado-principal">
+
+    <div class="contenedor barra-navegacion">
+
+        <a
+            href="{{ url_for('inicio') }}"
+            class="marca-findpets"
+        >
+
+            <img
+                src="{{ url_for('static', filename='imgs/logo.png') }}"
+                class="logo-findpets"
+                alt="FindPets"
+            >
+
+            <span>FindPets</span>
+
+        </a>
+
+        <nav class="menu-principal">
+
+            <a href="{{ url_for('inicio') }}">
+                Inicio
+            </a>
+
+            <a href="{{ url_for('buscar_mascota') }}">
+                Buscar mascota
+            </a>
+
+            <a href="{{ url_for('buscarporcodigo') }}">
+                Buscar por código
+            </a>
+
+            <a href="{{ url_for('murocomunitario') }}">
+                Muro comunitario
+            </a>
+
+            <a href="{{ url_for('formulariomascota') }}">
+                Reportar mascota
+            </a>
+
+            <a
+                href="{{ url_for('mis_mascotas') }}"
+                class="activo"
+            >
+                Mis mascotas
+            </a>
+
+        </nav>
+
+        <a
+            href="{{ url_for('paneldelusuario') }}"
+            class="acceso-cuenta"
+        >
+
+            <span class="material-icons-rounded">
+                account_circle
+            </span>
+
+            Mi cuenta
+
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<main class="pagina-mis-mascotas">
+
+<section class="contenedor">
+
+<div class="encabezado-pagina">
+
+<span class="etiqueta-superior">
+
+<span class="material-icons-rounded">
+
+pets
+
+</span>
+
+Mis mascotas
+
+</span>
+
+<h1>
+
+Administra todas tus mascotas.
+
+</h1>
+
+<p>
+
+Desde aquí puedes editar información, cambiar el estado,
+ver el código FindPets o eliminar un registro.
+
+</p>
+
+<a
+
+href="{{ url_for('formulariomascota') }}"
+
+class="boton-principal"
+
+>
+
+<span class="material-icons-rounded">
+
+add
+
+</span>
+
+Registrar nueva mascota
+
+</a>
+
+</div>
+
+
+
+{% if mascotas %}
+
+<div class="grid-mascotas">
+
+{% for mascota in mascotas %}
+
+<article class="tarjeta-mascota">
+
+<div class="imagen-mascota">
+
+{% if mascota.foto %}
+
+<img
+
+src="{{ url_for('static', filename='uploads/' + mascota.foto) }}"
+
+alt="{{ mascota.nombre }}"
+
+>
+
+{% else %}
+
+<div class="sin-foto">
+
+<span class="material-icons-rounded">
+
+pets
+
+</span>
+
+</div>
+
+{% endif %}
+
+<span class="estado estado-{{ mascota.estado|lower }}">
+
+{{ mascota.estado }}
+
+</span>
+
+</div>
+
+
+<div class="contenido-mascota">
+
+<h2>
+
+{{ mascota.nombre }}
+
+</h2>
+
+<p>
+
+<strong>Especie:</strong>
+
+{{ mascota.especie }}
+
+</p>
+
+<p>
+
+<strong>Raza:</strong>
+
+{{ mascota.raza }}
+
+</p>
+
+<p>
+
+<strong>Color:</strong>
+
+{{ mascota.color }}
+
+</p>
+
+<p>
+
+<strong>Edad:</strong>
+
+{{ mascota.edad }}
+
+años
+
+</p>
+
+<p>
+
+<strong>Código:</strong>
+
+{{ mascota.codigo }}
+
+</p>
+
+<div class="codigo-box">
+
+<span class="material-icons-rounded">
+
+qr_code_2
+
+</span>
+
+<strong>
+
+{{ mascota.codigo }}
+
+</strong>
+
+</div>
+
+<div class="acciones-mascota"><div class="acciones-mascota"><a
+    href="{{ url_for('editar_mascota', id_mascota=mascota.id_mascota) }}"
+    class="boton-secundario"
+>
+    <span class="material-icons-rounded">
+        edit
+    </span>
+
+    Editar
+</a>
+
+<form
+    action="{{ url_for('cambiar_estado_mascota', id_mascota=mascota.id_mascota) }}"
+    method="POST"
+>
+
+    {% if mascota.estado == "Perdida" %}
+
+    <button
+        type="submit"
+        class="boton-principal"
+    >
+
+        <span class="material-icons-rounded">
+            check_circle
+        </span>
+
+        Marcar encontrada
+
+    </button>
+
+    {% else %}
+
+    <button
+        type="submit"
+        class="boton-secundario"
+    >
+
+        <span class="material-icons-rounded">
+            pets
+        </span>
+
+        Marcar perdida
+
+    </button>
+
+    {% endif %}
+
+</form>
+
+<form
+    action="{{ url_for('eliminar_mascota', id_mascota=mascota.id_mascota) }}"
+    method="POST"
+>
+
+    <button
+        type="submit"
+        class="boton-eliminar"
+        onclick="return confirm('¿Eliminar esta mascota?')"
+    >
+
+        <span class="material-icons-rounded">
+            delete
+        </span>
+
+        Eliminar
+
+    </button>
+
+</form>
+
+</div>
+
+</div>
+
+</article>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="estado-vacio">
+
+    <span class="material-icons-rounded icono-vacio">
+        pets
+    </span>
+
+    <h2>
+        Aún no has registrado mascotas.
+    </h2>
+
+    <p>
+        Registra tu primera mascota para generar su código único
+        FindPets y comenzar a protegerla.
+    </p>
+
+    <a
+        href="{{ url_for('formulariomascota') }}"
+        class="boton-principal"
+    >
+
+        <span class="material-icons-rounded">
+            add
+        </span>
+
+        Registrar mascota
+
+    </a>
+
+</div>
+
+{% endif %}
+
+</section>
+
+</main>
+
+
+<footer class="pie-pagina-principal">
+
+    <div class="contenedor contenido-pie-pagina">
+
+        <div class="informacion-pie">
+
+            <img
+                src="{{ url_for('static', filename='imgs/logo.png') }}"
+                alt="FindPets"
+                class="logo-findpets"
+            >
+
+            <p>
+                FindPets ayuda a reunir mascotas perdidas con sus familias
+                mediante tecnología y colaboración comunitaria.
+            </p>
+
+        </div>
+
+        <div class="columna-pie">
+
+            <h3>
+                Empresa
+            </h3>
+
+            <a href="#">
+                Sobre nosotros
+            </a>
+
+            <a href="#">
+                Contacto
+            </a>
+
+            <a href="#">
+                Blog
+            </a>
+
+        </div>
+
+        <div class="columna-pie">
+
+            <h3>
+                Ayuda
+            </h3>
+
+            <a href="#">
+                Preguntas frecuentes
+            </a>
+
+            <a href="#">
+                Soporte
+            </a>
+
+            <a href="#">
+                Privacidad
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="pie-pagina-inferior">
+
+        © 2026 FindPets. Todos los derechos reservados.
+
+    </div>
+
+</footer>
+
+
+<script
+    src="{{ url_for('static', filename='js/java.js') }}"
+></script>
+
+</body>
+</html>

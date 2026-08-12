@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Panel de administración de FindPets.">
+
+    <title>Panel administrador | FindPets</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/styles.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/icon?family=Material+Icons+Rounded"
+    >
+
+</head>
+
+<body class="body-administrador">
+
+    <!-- ENCABEZADO -->
+
+    <header class="encabezado-principal">
+
+        <div class="contenedor barra-navegacion">
+
+            <a href="{{ url_for('inicio') }}" class="marca-findpets">
+
+                <img
+                    src="{{ url_for('static', filename='imgs/logo.png') }}"
+                    alt="Logo FindPets"
+                    class="logo-findpets"
+                >
+
+                <span>FindPets</span>
+
+            </a>
+
+            <span class="identificacion-admin">
+
+                <span class="material-icons-rounded">
+                    admin_panel_settings
+                </span>
+
+                Panel administrador
+
+            </span>
+
+        </div>
+
+    </header>
+
+
+    <!-- CONTENIDO -->
+
+    <main class="pagina-administrador">
+
+        <!-- MENÚ LATERAL -->
+
+        <aside class="menu-administrador">
+
+            <div class="titulo-menu-admin">
+
+                <span class="material-icons-rounded">
+                    pets
+                </span>
+
+                <div>
+
+                    <strong>Administrador</strong>
+
+                    <small>{{ session.get('nombre', 'FindPets') }}</small>
+
+                </div>
+
+            </div>
+
+
+            <nav class="navegacion-administrador">
+
+                <a href="{{ url_for('inicio') }}">
+
+                    <span class="material-icons-rounded">
+                        home
+                    </span>
+
+                    Inicio
+
+                </a>
+
+                <a href="{{ url_for('murocomunitario') }}">
+
+                    <span class="material-icons-rounded">
+                        groups
+                    </span>
+
+                    Muro comunitario
+
+                </a>
+
+                <a href="{{ url_for('paneldelusuario') }}">
+
+                    <span class="material-icons-rounded">
+                        person
+                    </span>
+
+                    Mi cuenta
+
+                </a>
+
+                <a href="{{ url_for('paneladministrador') }}" class="activo">
+
+                    <span class="material-icons-rounded">
+                        admin_panel_settings
+                    </span>
+
+                    Administración
+
+                </a>
+
+                <a href="{{ url_for('cerrar_sesion') }}" class="cerrar-sesion">
+
+                    <span class="material-icons-rounded">
+                        logout
+                    </span>
+
+                    Cerrar sesión
+
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- CONTENIDO PRINCIPAL -->
+
+        <section class="contenido-administrador">
+
+            <div class="encabezado-admin">
+
+                <div>
+
+                    <span class="etiqueta-superior">
+
+                        <span class="material-icons-rounded">
+                            admin_panel_settings
+                        </span>
+
+                        Control general
+
+                    </span>
+
+                    <h1>Panel de administración</h1>
+
+                    <p>
+                        Administra usuarios, mascotas y reportes de la comunidad FindPets.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+
+            {% if mensajes %}
+
+            <div class="contenedor-alertas">
+
+                {% for categoria, mensaje in mensajes %}
+
+                <div class="alerta alerta-{{ categoria }}">
+
+                    <span class="material-icons-rounded">
+
+                        {% if categoria == 'exito' %}
+                        check_circle
+                        {% elif categoria == 'error' %}
+                        error
+                        {% else %}
+                        info
+                        {% endif %}
+
+                    </span>
+
+                    <p>{{ mensaje }}</p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+            {% endwith %}
+
+
+            <!-- MÉTRICAS -->
+
+            <div class="cuadricula-metricas-admin">
+
+                <article class="tarjeta-metrica-admin">
+
+                    <span class="icono-metrica-admin">
+
+                        <span class="material-icons-rounded">
+                            people
+                        </span>
+
+                    </span>
+
+                    <div>
+
+                        <p>Usuarios registrados</p>
+
+                        <strong>{{ total_usuarios }}</strong>
+
+                    </div>
+
+                </article>
+
+                <article class="tarjeta-metrica-admin">
+
+                    <span class="icono-metrica-admin">
+
+                        <span class="material-icons-rounded">
+                            pets
+                        </span>
+
+                    </span>
+
+                    <div>
+
+                        <p>Mascotas registradas</p>
+
+                        <strong>{{ total_mascotas }}</strong>
+
+                    </div>
+
+                </article>
+
+                <article class="tarjeta-metrica-admin">
+
+                    <span class="icono-metrica-admin">
+
+                        <span class="material-icons-rounded">
+                            campaign
+                        </span>
+
+                    </span>
+
+                    <div>
+
+                        <p>Reportes activos</p>
+
+                        <strong>{{ total_reportes }}</strong>
+
+                    </div>
+
+                </article>
+
+                <article class="tarjeta-metrica-admin">
+
+                    <span class="icono-metrica-admin">
+
+                        <span class="material-icons-rounded">
+                            check_circle
+                        </span>
+
+                    </span>
+
+                    <div>
+
+                        <p>Mascotas reunidas</p>
+
+                        <strong>{{ total_reunidas }}</strong>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- USUARIOS -->
+
+            <section class="tarjeta-admin tarjeta">
+
+                <div class="encabezado-tarjeta-admin">
+
+                    <div>
+
+                        <h2>Usuarios</h2>
+
+                        <p>Gestiona las cuentas de la comunidad.</p>
+
+                    </div>
+
+                </div>
+
+                <div class="contenedor-tabla-admin">
+
+                    <table class="tabla-admin">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Usuario</th>
+                                <th>Correo</th>
+                                <th>Comuna</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% if usuarios %}
+
+                            {% for usuario in usuarios %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="usuario-tabla">
+
+                                        {% if usuario.foto_perfil %}
+
+                                        <img
+                                            src="{{ url_for('static', filename='uploads/' + usuario.foto_perfil) }}"
+                                            alt="Foto de {{ usuario.nombre }}"
+                                        >
+
+                                        {% else %}
+
+                                        <span class="material-icons-rounded">
+                                            account_circle
+                                        </span>
+
+                                        {% endif %}
+
+                                        <div>
+
+                                            <strong>
+                                                {{ usuario.nombre }} {{ usuario.apellido }}
+                                            </strong>
+
+                                            <small>ID: {{ usuario.id_usuario }}</small>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+                                <td>{{ usuario.correo }}</td>
+
+                                <td>{{ usuario.comuna or '-' }}</td>
+
+                                <td>{{ usuario.rol }}</td>
+
+                                <td>
+
+                                    <span class="estado-usuario estado-{{ usuario.estado|lower }}">
+                                        {{ usuario.estado }}
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="acciones-tabla">
+
+                                        {% if usuario.estado == 'Activo' %}
+
+                                        <form
+                                            action="{{ url_for('bloquear_usuario', id_usuario=usuario.id_usuario) }}"
+                                            method="POST"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="boton-icono-admin"
+                                                title="Bloquear usuario"
+                                            >
+                                                <span class="material-icons-rounded">
+                                                    block
+                                                </span>
+                                            </button>
+
+                                        </form>
+
+                                        {% else %}
+
+                                        <form
+                                            action="{{ url_for('activar_usuario', id_usuario=usuario.id_usuario) }}"
+                                            method="POST"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="boton-icono-admin"
+                                                title="Activar usuario"
+                                            >
+                                                <span class="material-icons-rounded">
+                                                    check_circle
+                                                </span>
+                                            </button>
+
+                                        </form>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                            {% else %}
+
+                            <tr>
+
+                                <td colspan="6" class="tabla-vacia">
+                                    No hay usuarios registrados.
+                                </td>
+
+                            </tr>
+
+                            {% endif %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- MASCOTAS -->
+
+            <section class="tarjeta-admin tarjeta">
+
+                <div class="encabezado-tarjeta-admin">
+
+                    <div>
+
+                        <h2>Mascotas</h2>
+
+                        <p>Todos los reportes de mascotas registrados.</p>
+
+                    </div>
+
+                </div>
+
+                <div class="contenedor-tabla-admin">
+
+                    <table class="tabla-admin">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Mascota</th>
+                                <th>Propietario</th>
+                                <th>Especie</th>
+                                <th>Estado</th>
+                                <th>Código</th>
+                                <th>Acciones</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% if mascotas %}
+
+                            {% for mascota in mascotas %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="mascota-tabla">
+
+                                        {% if mascota.foto %}
+
+                                        <img
+                                            src="{{ url_for('static', filename='uploads/' + mascota.foto) }}"
+                                            alt="{{ mascota.nombre }}"
+                                        >
+
+                                        {% else %}
+
+                                        <span class="material-icons-rounded">
+                                            pets
+                                        </span>
+
+                                        {% endif %}
+
+                                        <div>
+
+                                            <strong>{{ mascota.nombre or 'Sin identificar' }}</strong>
+
+                                            <small>{{ mascota.raza or mascota.especie }}</small>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+                                <td>{{ mascota.propietario }}</td>
+
+                                <td>{{ mascota.especie }}</td>
+
+                                <td>
+
+                                    <span class="estado-usuario estado-{{ mascota.estado|lower }}">
+                                        {{ mascota.estado }}
+                                    </span>
+
+                                </td>
+
+                                <td>{{ mascota.codigo }}</td>
+
+                                <td>
+
+                                    <div class="acciones-tabla">
+
+                                        <a
+                                            href="{{ url_for('revisar_reporte_admin', id_mascota=mascota.id_mascota) }}"
+                                            class="boton-icono-admin"
+                                            title="Revisar reporte"
+                                        >
+                                            <span class="material-icons-rounded">
+                                                visibility
+                                            </span>
+                                        </a>
+
+                                        <form
+                                            action="{{ url_for('eliminar_reporte_admin', id_mascota=mascota.id_mascota) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('¿Eliminar esta mascota?')"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="boton-icono-admin"
+                                                title="Eliminar reporte"
+                                            >
+                                                <span class="material-icons-rounded">
+                                                    delete
+                                                </span>
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                            {% else %}
+
+                            <tr>
+
+                                <td colspan="6" class="tabla-vacia">
+                                    No hay mascotas registradas.
+                                </td>
+
+                            </tr>
+
+                            {% endif %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- MODERACIÓN -->
+
+            <section class="tarjeta-admin tarjeta">
+
+                <div class="encabezado-tarjeta-admin">
+
+                    <div>
+
+                        <h2>Moderación de reportes</h2>
+
+                        <p>Reportes activos que requieren revisión.</p>
+
+                    </div>
+
+                </div>
+
+                {% if reportes_moderacion %}
+
+                <div class="lista-moderacion">
+
+                    {% for reporte in reportes_moderacion %}
+
+                    <div class="item-moderacion">
+
+                        <span class="icono-moderacion">
+
+                            <span class="material-icons-rounded">
+                                campaign
+                            </span>
+
+                        </span>
+
+                        <div class="contenido-moderacion">
+
+                            <div>
+
+                                <h3>{{ reporte.nombre or 'Sin identificar' }} · {{ reporte.especie }}</h3>
+
+                                <p>{{ reporte.ubicacion }}</p>
+
+                                <small>
+                                    Código {{ reporte.codigo }} · Publicado por {{ reporte.propietario }}
+                                </small>
+
+                            </div>
+
+                            <div class="acciones-moderacion">
+
+                                <a
+                                    href="{{ url_for('revisar_reporte_admin', id_mascota=reporte.id_mascota) }}"
+                                    class="boton-secundario"
+                                >
+                                    Revisar
+                                </a>
+
+                                <form
+                                    action="{{ url_for('eliminar_reporte_admin', id_mascota=reporte.id_mascota) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('¿Eliminar este reporte?')"
+                                >
+
+                                    <button type="submit" class="boton-eliminar">
+                                        Eliminar
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <div class="estado-vacio-admin">
+
+                    <span class="material-icons-rounded">
+                        verified
+                    </span>
+
+                    <h3>Sin reportes pendientes</h3>
+
+                    <p>No hay reportes activos en este momento.</p>
+
+                </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- PUBLICACIONES RECIENTES -->
+
+            <section class="tarjeta-admin tarjeta">
+
+                <div class="encabezado-tarjeta-admin">
+
+                    <div>
+
+                        <h2>Publicaciones recientes</h2>
+
+                        <p>Últimas mascotas registradas en la comunidad.</p>
+
+                    </div>
+
+                </div>
+
+                {% if publicaciones_recientes %}
+
+                <div class="lista-publicaciones-admin">
+
+                    {% for publicacion in publicaciones_recientes %}
+
+                    <div class="publicacion-admin">
+
+                        <div>
+
+                            <strong>
+                                {{ publicacion.nombre or 'Sin identificar' }} · {{ publicacion.especie }}
+                            </strong>
+
+                            <p>{{ publicacion.ubicacion }}</p>
+
+                        </div>
+
+                        <span class="estado-usuario estado-{{ publicacion.estado|lower }}">
+                            {{ publicacion.estado }}
+                        </span>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <div class="estado-vacio-admin">
+
+                    <span class="material-icons-rounded">
+                        dynamic_feed
+                    </span>
+
+                    <h3>Sin publicaciones</h3>
+
+                    <p>Los reportes de la comunidad aparecerán aquí.</p>
+
+                </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- ESTADO DEL SISTEMA -->
+
+            <section class="tarjeta-admin tarjeta">
+
+                <div class="encabezado-tarjeta-admin">
+
+                    <div>
+
+                        <h2>Estado del sistema</h2>
+
+                        <p>Resumen general de la plataforma.</p>
+
+                    </div>
+
+                </div>
+
+                <div class="lista-estado-sistema">
+
+                    <div class="estado-sistema">
+
+                        <span class="punto-estado activo"></span>
+
+                        <div>
+
+                            <strong>Servicio activo</strong>
+
+                            <p>Plataforma funcionando correctamente.</p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="estado-sistema">
+
+                        <span class="punto-estado"></span>
+
+                        <div>
+
+                            <strong>Base de datos</strong>
+
+                            <p>Conectada y disponible.</p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="estado-sistema">
+
+                        <span class="punto-estado"></span>
+
+                        <div>
+
+                            <strong>Usuarios</strong>
+
+                            <p>{{ total_usuarios }} cuentas registradas.</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <footer class="pie-pagina-principal">
+
+        <div class="contenedor pie-pagina-inferior">
+
+            <p>
+                © 2026 FindPets. Todos los derechos reservados.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <script
+        src="{{ url_for('static', filename='js/java.js') }}"
+        defer
+    ></script>
+
+</body>
+
+</html>
